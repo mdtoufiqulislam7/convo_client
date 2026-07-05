@@ -307,10 +307,15 @@ export default function LandingPage() {
 
       </main>
 
-      {/* Footer */}
-      <footer className="py-6 border-t border-slate-900 bg-slate-950 text-slate-650 text-center text-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <footer className="py-6 border-t border-slate-900 bg-slate-950 text-slate-650 text-xs">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <span>&copy; 2026 ConvoAI Technologies. All rights reserved.</span>
+          <button
+            onClick={() => router.push('/privacy')}
+            className="hover:text-indigo-400 transition-colors font-medium"
+          >
+            Privacy Policy
+          </button>
         </div>
       </footer>
 
