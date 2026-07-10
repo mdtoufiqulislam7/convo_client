@@ -9,7 +9,7 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans relative selection:bg-indigo-600/30 selection:text-indigo-200 overflow-hidden">
-      
+
       {/* Background Glows */}
       <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-indigo-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-10 right-1/4 w-[450px] h-[450px] bg-violet-600/5 rounded-full blur-[100px] pointer-events-none" />
@@ -17,14 +17,14 @@ export default function PrivacyPolicy() {
       {/* Header */}
       <header className="sticky top-0 z-40 w-full border-b border-slate-900 bg-slate-950/80 backdrop-blur-md">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-          <button 
+          <button
             onClick={() => router.push('/')}
             className="flex items-center space-x-1.5 text-xs text-slate-400 hover:text-slate-200 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-800 transition-all"
           >
             <ArrowLeft size={13} />
             <span>Back to Home</span>
           </button>
-          
+
           <div className="flex items-center space-x-2">
             <div className="h-8 w-8 rounded-lg bg-indigo-650 flex items-center justify-center">
               <Shield size={16} className="text-white" />
@@ -36,7 +36,7 @@ export default function PrivacyPolicy() {
 
       {/* Content */}
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 sm:px-6 py-12 space-y-10 relative">
-        
+
         {/* Banner Title */}
         <div className="space-y-4 text-center sm:text-left">
           <span className="px-3 py-1 bg-indigo-500/10 text-indigo-400 rounded-full text-xs font-bold uppercase tracking-wider">
@@ -54,7 +54,7 @@ export default function PrivacyPolicy() {
 
         {/* Pin Points Section */}
         <div className="space-y-8">
-          
+
           {/* 1. Data Collection */}
           <div className="flex gap-4">
             <div className="h-10 w-10 bg-indigo-600/10 rounded-xl flex items-center justify-center text-indigo-400 shrink-0 border border-indigo-500/10">

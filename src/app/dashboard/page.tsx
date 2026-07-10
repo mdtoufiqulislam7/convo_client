@@ -69,6 +69,10 @@ export default function UserDashboard() {
   const [pageId, setPageId] = useState('');
   const [pageAccessToken, setPageAccessToken] = useState('');
   const [verifyToken, setVerifyToken] = useState('');
+  const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [voiceProvider, setVoiceProvider] = useState('google');
+  const [voiceApiKey, setVoiceApiKey] = useState('');
+  const [voiceLanguage, setVoiceLanguage] = useState('bn');
   const [credMsg, setCredMsg] = useState('');
   const [credLoading, setCredLoading] = useState(false);
 
@@ -218,6 +222,10 @@ export default function UserDashboard() {
         setPageId(data.credentials.page_id || '');
         setPageAccessToken(data.credentials.page_access_token || '');
         setVerifyToken(data.credentials.verify_token || '');
+        setVoiceEnabled(data.credentials.voice_enabled === true);
+        setVoiceProvider(data.credentials.voice_provider || 'google');
+        setVoiceApiKey(data.credentials.voice_api_key || '');
+        setVoiceLanguage(data.credentials.voice_language || 'bn');
       }
     } catch (err) {
       console.error(err);
@@ -237,11 +245,20 @@ export default function UserDashboard() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify({ pageName, pageId, pageAccessToken, verifyToken })
+        body: JSON.stringify({ 
+          pageName, 
+          pageId, 
+          pageAccessToken, 
+          verifyToken,
+          voiceEnabled,
+          voiceProvider,
+          voiceApiKey,
+          voiceLanguage
+        })
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        setCredMsg('Facebook Page credentials saved successfully!');
+        setCredMsg('Facebook Page & AI Voice credentials saved successfully!');
       } else {
         setCredMsg(data.message || 'Failed to save credentials.');
       }
@@ -1057,6 +1074,72 @@ export default function UserDashboard() {
                     <label className="block text-[10px] font-bold text-slate-400 mb-1">Facebook Page Access Token</label>
                     <textarea rows={4} required value={pageAccessToken} onChange={e => setPageAccessToken(e.target.value)} className="w-full bg-slate-950 border border-slate-900 rounded px-2.5 py-2 text-slate-200 font-mono resize-none text-[11px]" />
                   </div>
+                  {/* Voice replies settings divider */}
+                  <hr className="border-slate-900 my-4" />
+                  <div className="space-y-4 mb-5">
+                    <h4 className="text-xs font-bold text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <Bot size={14} /> AI Voice Replies (Voice-over-Chat)
+                    </h4>
+                    
+                    <div className="flex items-center space-x-3 bg-slate-950/60 p-3 rounded-lg border border-slate-900">
+                      <input
+                        type="checkbox"
+                        id="voiceEnabled"
+                        checked={voiceEnabled}
+                        onChange={(e) => setVoiceEnabled(e.target.checked)}
+                        className="rounded border-slate-800 bg-slate-900 text-indigo-650 focus:ring-indigo-650 focus:ring-offset-slate-950 h-4 w-4"
+                      />
+                      <label htmlFor="voiceEnabled" className="text-xs font-semibold text-slate-350 cursor-pointer select-none">
+                        Enable Automatic AI Voice Message Replies on Messenger
+                      </label>
+                    </div>
+
+                    {voiceEnabled && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-900 animate-fade-in">
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 mb-1">Voice Provider</label>
+                          <select
+                            value={voiceProvider}
+                            onChange={(e) => setVoiceProvider(e.target.value)}
+                            className="w-full bg-slate-900 border border-slate-850 rounded px-2.5 py-2 text-slate-200 text-xs focus:outline-none focus:border-indigo-600"
+                          >
+                            <option value="google">Google Translate TTS (Free, Multilingual)</option>
+                            <option value="openai">OpenAI TTS (Premium)</option>
+                            <option value="elevenlabs">ElevenLabs (Premium, Natural)</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label className="block text-[10px] font-bold text-slate-400 mb-1">Voice Language</label>
+                          <select
+                            value={voiceLanguage}
+                            onChange={(e) => setVoiceLanguage(e.target.value)}
+                            className="w-full bg-slate-900 border border-slate-850 rounded px-2.5 py-2 text-slate-200 text-xs focus:outline-none focus:border-indigo-600"
+                          >
+                            <option value="bn">Bengali (bn)</option>
+                            <option value="en">English (en)</option>
+                          </select>
+                        </div>
+
+                        {(voiceProvider === 'openai' || voiceProvider === 'elevenlabs') && (
+                          <div className="sm:col-span-2">
+                            <label className="block text-[10px] font-bold text-slate-400 mb-1">
+                              {voiceProvider === 'openai' ? 'OpenAI API Key' : 'ElevenLabs API Key'}
+                            </label>
+                            <input
+                              type="password"
+                              required
+                              value={voiceApiKey}
+                              onChange={(e) => setVoiceApiKey(e.target.value)}
+                              placeholder={voiceProvider === 'openai' ? 'sk-...' : 'Your elevenlabs API key'}
+                              className="w-full bg-slate-900 border border-slate-850 rounded px-2.5 py-2 text-slate-200 font-mono focus:outline-none focus:border-indigo-600 text-xs"
+                            />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
                   <button type="submit" disabled={credLoading} className="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 font-semibold rounded text-white text-xs">Save Credentials</button>
                 </form>
               </div>
