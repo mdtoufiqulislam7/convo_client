@@ -658,6 +658,59 @@ export default function UserDashboard() {
                   <h3 className="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2">
                     <Database size={16} className="text-indigo-400" /> Global Product Catalog
                   </h3>
+                  
+                  {/* Admin Product Inquiry Analytics Widget */}
+                  {adminProducts.length > 0 && (
+                    <div className="bg-slate-950/60 border border-slate-900 rounded-xl p-4 mb-5 space-y-3.5">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-450 flex items-center gap-1">
+                            <Sparkles size={11} className="text-indigo-400" /> AI Inquiry Popularity Analytics
+                          </h4>
+                          <p className="text-[9px] text-slate-500">Relative customer query matching frequency across all products</p>
+                        </div>
+                      </div>
+                      <div className="w-full bg-slate-900/50 rounded-lg p-3 border border-slate-900">
+                        <div className="flex h-3 w-full rounded-full overflow-hidden mb-3 border border-slate-950/80 bg-slate-950 p-0.5">
+                          {adminProducts.map((p, idx) => {
+                            const colors = ['bg-indigo-500', 'bg-violet-500', 'bg-purple-500', 'bg-pink-500', 'bg-emerald-500'];
+                            const colorClass = colors[idx % colors.length];
+                            const pct = p.popularity_percentage || 0;
+                            if (pct === 0) return null;
+                            return (
+                              <div 
+                                key={p.id}
+                                className={`${colorClass} h-full transition-all`}
+                                style={{ width: `${pct}%` }}
+                                title={`${p.name}: ${pct}%`}
+                              />
+                            );
+                          })}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {adminProducts.map((p, idx) => {
+                            const colors = ['bg-indigo-500', 'bg-violet-500', 'bg-purple-500', 'bg-pink-500', 'bg-emerald-500'];
+                            const colorClass = colors[idx % colors.length];
+                            const textColors = ['text-indigo-400', 'text-violet-400', 'text-purple-400', 'text-pink-400', 'text-emerald-400'];
+                            const textColorClass = textColors[idx % textColors.length];
+                            const pct = p.popularity_percentage || 0;
+                            return (
+                              <div key={p.id} className="flex items-center space-x-1.5 bg-slate-950/60 p-1.5 rounded border border-slate-900/40">
+                                <span className={`h-2 w-2 rounded-full ${colorClass}`} />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-[9px] font-semibold text-slate-350 truncate">{p.name}</p>
+                                  <p className="text-[8px] text-slate-500">
+                                    Popularity: <span className={`${textColorClass} font-bold`}>{pct}%</span> ({p.inquiry_count || 0} hits)
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {adminProducts.length === 0 ? (
                     <div className="text-center py-8 text-xs text-slate-500">No products inside database.</div>
                   ) : (
@@ -669,12 +722,13 @@ export default function UserDashboard() {
                             <th className="py-2.5 px-3">Name</th>
                             <th className="py-2.5 px-3">Price</th>
                             <th className="py-2.5 px-3">Keywords</th>
+                            <th className="py-2.5 px-3">Inquiry Popularity</th>
                             <th className="py-2.5 px-3">Description Context</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {adminProducts.map((p) => (
-                            <tr key={p.id} className="border-b border-slate-900 hover:bg-slate-900/10 text-slate-350">
+                          {adminProducts.map((p, idx) => (
+                            <tr key={p.id} className="border-b border-slate-900 hover:bg-slate-900/10 text-slate-355">
                               <td className="py-3 px-3">{p.id}</td>
                               <td className="py-3 px-3 font-semibold text-slate-200">{p.name}</td>
                               <td className="py-3 px-3 text-indigo-400 font-bold">৳{p.price}</td>
@@ -683,6 +737,17 @@ export default function UserDashboard() {
                                   {p.keywords && p.keywords.map((k: string, idx: number) => (
                                     <span key={idx} className="bg-slate-950 px-1 py-0.5 rounded text-[10px] text-slate-400">{k}</span>
                                   ))}
+                                </div>
+                              </td>
+                              <td className="py-3 px-3">
+                                <div className="flex items-center space-x-2">
+                                  <div className="flex-1 bg-slate-950 rounded-full h-1.5 w-16 overflow-hidden border border-slate-900">
+                                    <div 
+                                      className="bg-gradient-to-r from-indigo-500 to-violet-500 h-full rounded-full" 
+                                      style={{ width: `${p.popularity_percentage || 0}%` }}
+                                    />
+                                  </div>
+                                  <span className="font-bold text-slate-300 min-w-[1.5rem] text-right">{p.popularity_percentage || 0}%</span>
                                 </div>
                               </td>
                               <td className="py-3 px-3 text-[11px] max-w-xs truncate text-slate-450">{p.description}</td>
@@ -1049,6 +1114,59 @@ export default function UserDashboard() {
                   <h3 className="text-sm font-bold text-slate-100 mb-4 flex items-center gap-2">
                     <Database size={16} className="text-indigo-400" /> Your Custom Trained Product Assets
                   </h3>
+
+                  {/* Client Product Inquiry Analytics Widget with Stacked Bar Graph */}
+                  {!prodLoading && clientProducts.length > 0 && (
+                    <div className="bg-slate-950/60 border border-slate-900 rounded-xl p-4 mb-5 space-y-3.5">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                            <Sparkles size={11} className="text-indigo-400" /> AI Inquiry Popularity Analytics
+                          </h4>
+                          <p className="text-[9px] text-slate-500">Relative customer query matching frequency across your custom products</p>
+                        </div>
+                      </div>
+                      <div className="w-full bg-slate-900/50 rounded-lg p-3 border border-slate-900">
+                        <div className="flex h-3 w-full rounded-full overflow-hidden mb-3 border border-slate-950/80 bg-slate-950 p-0.5">
+                          {clientProducts.map((p, idx) => {
+                            const colors = ['bg-indigo-500', 'bg-violet-500', 'bg-purple-500', 'bg-pink-500', 'bg-emerald-500'];
+                            const colorClass = colors[idx % colors.length];
+                            const pct = p.popularity_percentage || 0;
+                            if (pct === 0) return null;
+                            return (
+                              <div 
+                                key={p.id}
+                                className={`${colorClass} h-full transition-all`}
+                                style={{ width: `${pct}%` }}
+                                title={`${p.name}: ${pct}%`}
+                              />
+                            );
+                          })}
+                        </div>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {clientProducts.map((p, idx) => {
+                            const colors = ['bg-indigo-500', 'bg-violet-500', 'bg-purple-500', 'bg-pink-500', 'bg-emerald-500'];
+                            const colorClass = colors[idx % colors.length];
+                            const textColors = ['text-indigo-400', 'text-violet-400', 'text-purple-400', 'text-pink-400', 'text-emerald-400'];
+                            const textColorClass = textColors[idx % textColors.length];
+                            const pct = p.popularity_percentage || 0;
+                            return (
+                              <div key={p.id} className="flex items-center space-x-1.5 bg-slate-950/60 p-1.5 rounded border border-slate-900/40">
+                                <span className={`h-2 w-2 rounded-full ${colorClass}`} />
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-[9px] font-semibold text-slate-355 truncate">{p.name}</p>
+                                  <p className="text-[8px] text-slate-500">
+                                    Popularity: <span className={`${textColorClass} font-bold`}>{pct}%</span> ({p.inquiry_count || 0} hits)
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {prodLoading ? (
                     <div className="text-center py-8 text-xs text-slate-500 animate-pulse">Loading catalog...</div>
                   ) : clientProducts.length === 0 ? (
@@ -1062,6 +1180,7 @@ export default function UserDashboard() {
                             <th className="py-2.5 px-3">Name</th>
                             <th className="py-2.5 px-3">Price</th>
                             <th className="py-2.5 px-3">Keywords</th>
+                            <th className="py-2.5 px-3">Inquiry Popularity</th>
                             <th className="py-2.5 px-3">Description context</th>
                           </tr>
                         </thead>
@@ -1076,6 +1195,17 @@ export default function UserDashboard() {
                                   {p.keywords && p.keywords.map((k: string, idx: number) => (
                                     <span key={idx} className="bg-slate-950 px-1.5 py-0.5 rounded text-[10px] text-slate-400">{k}</span>
                                   ))}
+                                </div>
+                              </td>
+                              <td className="py-3 px-3">
+                                <div className="flex items-center space-x-2">
+                                  <div className="flex-1 bg-slate-950 rounded-full h-1.5 w-16 overflow-hidden border border-slate-900">
+                                    <div 
+                                      className="bg-gradient-to-r from-indigo-500 to-violet-500 h-full rounded-full" 
+                                      style={{ width: `${p.popularity_percentage || 0}%` }}
+                                    />
+                                  </div>
+                                  <span className="font-bold text-slate-300 min-w-[1.5rem] text-right">{p.popularity_percentage || 0}%</span>
                                 </div>
                               </td>
                               <td className="py-3 px-3 text-[11px] text-slate-400 max-w-xs truncate">{p.description}</td>
